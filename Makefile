@@ -1,7 +1,7 @@
 # this is an example makefile for the first homework
 # assignment this semester
 
-all: asio-1.12.2 src/chat_server src/chat_client src/json
+all: asio-1.12.2 src/player/dealer/json
 
 asio-1.12.2:
 	tar xzf asio-1.12.2.tar.gz
@@ -12,7 +12,7 @@ LDLIBS+= -lpthread
 
 clean:
 	-rm -rf asio-1.12.2
-	-rm -f src/chat_client
-	-rm -f src/chat_server		
+	-rm -f src/player
+	-rm -f src/dealer		
 	-rm -f src/json
 
