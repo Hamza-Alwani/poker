@@ -1,7 +1,7 @@
 # this is an example makefile for the first homework
 # assignment this semester
 
-all: asio-1.12.2 src/player/dealer/json
+all: asio-1.12.2 src/player src/dealer src/json
 
 asio-1.12.2:
 	tar xzf asio-1.12.2.tar.gz
