@@ -1,217 +1,40 @@
-////
-// chat_client.cpp
-// ~~~~~~~~~~~~~~~
-//
-// Copyright (c) 2003-2018 Christopher M. Kohlhoff (chris at kohlhoff dot com)
-//
-// Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-//
-
-#include <cstdlib>
-#include <deque>
-#include <iostream>
-#include <thread>
-#include "asio.hpp"
-#include "hand.hpp"
-#include "json.hpp"
-#include <chrono> 
-#include <ctime> 
-#include <string>
-using asio::ip::tcp;
-
-
-
-
-//typedef std::deque<chat_message> chat_message_queue;
-
-//class chat_client
-//{
-//public:
-//  chat_client(asio::io_context& io_context,
-//      const tcp::resolver::results_type& endpoints)
-//    : io_context_(io_context),
-//      socket_(io_context)
-//  {
-//    do_connect(endpoints); //cse3310 connection is established with the server
-//  }
-
-//  void write(const chat_message& msg)
-//  {
-//    asio::post(io_context_,
-//        [this, msg]()
-//        {
-//          bool write_in_progress = !write_msgs_.empty();
-//          write_msgs_.push_back(msg);
-//          if (!write_in_progress)
-//          {
-//            do_write();
-//          }
-//        });
-//  }
-
-//  void close()
-//  {
-//    asio::post(io_context_, [this]() { socket_.close(); });
-//  }
-
-//private:
-//  void do_connect(const tcp::resolver::results_type& endpoints)
-//  {
-//    asio::async_connect(socket_, endpoints,
-//        [this](std::error_code ec, tcp::endpoint)
-//        {
-//          if (!ec)
-//          {
-//            do_read_header();
-//          }
-//        });
-//  }
-
-//  void do_read_header()
-//  {
-//    asio::async_read(socket_,
-//        asio::buffer(read_msg_.data(), chat_message::header_length),
-//        [this](std::error_code ec, std::size_t /*length*/)
-//        {
-//          if (!ec && read_msg_.decode_header())
-//          {
-//            do_read_body();
-//          }
-//          else
-//          {
-//            socket_.close();
-//          }
-//        });
-//  }
-
-//  void do_read_body()
-//  {
-//    asio::async_read(socket_,
-//        asio::buffer(read_msg_.body(), read_msg_.body_length()),
-//        [this](std::error_code ec, std::size_t /*length*/)
-//        {
-//          if (!ec)
-//          {
-//            std::cout.write(read_msg_.body(), read_msg_.body_length()); //cse3310 message body is received from the server
-//            std::cout <<"\n";
-//            do_read_header();
-//          }
-//          else
-//          {
-//            socket_.close();
-//          }
-//        });
-//  }
-
-//  void do_write()
-//  {
-//    asio::async_write(socket_,
-//        asio::buffer(write_msgs_.front().data(),
-//          write_msgs_.front().length()),
-//        [this](std::error_code ec, std::size_t /*length*/)
-//        {
-//          if (!ec)
-//          {
-//            write_msgs_.pop_front();
-//            if (!write_msgs_.empty())
-//            {
-//              do_write();
-//            }
-//          }
-//          else
-//          {
-//            socket_.close();
-//          }
-//        });
-//  }
-
-//private:
-//  asio::io_context& io_context_;
-//  tcp::socket socket_;
-//  chat_message read_msg_;
-//  chat_message_queue write_msgs_;
-//};
-
-//int main(int argc, char* argv[])
-//{
-//  try
-//  {
-//    if (argc != 3)
-//    {
-//      std::cerr << "Usage: chat_client <host> <port>\n";
-//      return 1;
-//    }
-//    nlohmann::json j;	
-//	std::string name= "temp";
-//	int id=420;
-//    char line[chat_message::max_body_length + 1];
-//    std::cout<<"enter your name"<<std::endl;
-//    std::cin>>name;
-//    std::cout<<"enter your Id"<<std::endl;
-//    std::cin>>id;
-//    std::cout<<"client ready to send msg"<<std::endl;
-//    std::cout<<std::endl;
-
-
-//    asio::io_context io_context;
-//    tcp::resolver resolver(io_context);
-//    auto endpoints = resolver.resolve(argv[1], argv[2]);
-//    chat_client c(io_context, endpoints);
-//    std::thread t([&io_context](){ io_context.run(); });
-//    
-//   
-//	j=j.create(name,id);	
-//	//cin.get();
-//	
-//    while (std::cin.getline(line, chat_message::max_body_length + 1))
-//    //cse3310 accepts input from the user via cin
-//    {
-//	//added my code here
-//	if(line[0]!= '\0')
-//	{
-//	auto timenow = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()); 
-//  	std::string chtime= ctime(&timenow);
-//   	chtime=chtime.substr(0, chtime.length() -1); 	
-//   	j=j.set_t(j,chtime);
-//	std::string temp;
-// 	temp = j.dump()+ " ";   	
-//	char holder [chat_message::max_body_length + 1];
-//	memcpy(holder,line,std::strlen(line));	
-//	memset(line, 0,std::strlen(line));
-//	for(unsigned i=0; i<temp.length();i++)
-//	{
-//	
-//		line[i]=temp.at(i);
-
-//	}
-//	for(unsigned i=temp.length();i<temp.length()+std::strlen(holder);i++)
-//	{
-//		line[i]=holder[i-temp.length()];	
-//	}
-//	
-//	temp="";
-//	memset(holder, 0,std::strlen(holder));
-//	//memcpy(holder,line,std::strlen(line));
-//	chat_message msg;
-//    msg.body_length(std::strlen(line));
-//    std::memcpy(msg.body(), line, msg.body_length()); //cse3310  message is sent to the chat server.
-//    memset(line, 0,std::strlen(line));
-//    msg.encode_header();
-//	c.write(msg);
-//	
-//	}
-//	
-//    
-//    }
-
-//    c.close();
-//    t.join();
-//  }
-//  catch (std::exception& e)
-//  {
-//    std::cerr << "Exception: " << e.what() << "\n";
-//  }
-
-//  return 0;
-//}
+// Client side C/C++ program to demonstrate Socket programming 
+#include <stdio.h> 
+#include <sys/socket.h> 
+#include <arpa/inet.h> 
+#include <unistd.h> 
+#include <string.h> 
+#define PORT 8080 
+   
+int main(int argc, char const *argv[]) 
+{ 
+    int sock = 0, valread; 
+    struct sockaddr_in serv_addr; 
+    char *hello = "yeet yote"; 
+    char buffer[1024] = {0}; 
+    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) 
+    { 
+        printf("\n Socket creation error \n"); 
+        return -1; 
+    } 
+   
+    serv_addr.sin_family = AF_INET; 
+    serv_addr.sin_port = htons(PORT); 
+       
+    // Convert IPv4 and IPv6 addresses from text to binary form 
+    if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr)<=0)  
+    { 
+        printf("\nInvalid address/ Address not supported \n"); 
+        return -1; 
+    } 
+   
+    if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) 
+    { 
+        printf("\nConnection Failed \n"); 
+        return -1; 
+    } 
+    send(sock , hello , strlen(hello) , 0 ); 
+    valread = read( sock , buffer, 1024); 
+    printf("%s\n",buffer ); 
+    return 0; 
+} 
