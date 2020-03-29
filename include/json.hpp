@@ -21545,25 +21545,32 @@ class basic_json
 
 
 //added my own
-	nlohmann::json create(std::string n, int i)
-	{
-		json k{
-    
-   		 	{"name",n},
-    		{"id", i},
-    		{"chrono",""},
-    	};	
-    	return k;
-}
+//nlohmann::json create( std::string n, int i, std::string h[4], std::string a)
+//	{
+//		json k{
+//    
+//   		 	{"name",n},
+//    		{"id", i},
+//    		//{"chrono",t},
+//    		{"action", a},
+//			{"card1",h[0]},
+//    		{"card2",h[1]},
+//    		{"card3",h[2]},
+//    		{"card4",h[3]},
+//    		{"card5",h[4]},
+//    		
+//    	};	
+//    	return k;
+//}
 
 
-nlohmann::json set_t(json k, std::string t)
-	{
-		 k["chrono"]=t;
-    
-   		 	
-    	return k;
-	}
+//nlohmann::json set_t(json k, std::string t)
+//	{
+//		 k["chrono"]=t;
+//    
+//   		 	
+//    	return k;
+//	}
 
 
 
