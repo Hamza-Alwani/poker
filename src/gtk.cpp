@@ -142,7 +142,7 @@ void setup(std::string s)
 	
 	j=j.create(card1,card2,card3,card4,card5,action," ",cb,p);	
 //	std::cerr<<j.dump();
-	std::cerr<<j.dupm()<<endl;
+	std::cerr<<j.dump()<<std::endl;
 	strcpy(temp,card1.c_str());
 	gtk_button_set_label(GTK_BUTTON(g_card1),  temp);
 	
@@ -290,13 +290,11 @@ extern "C" void check_clicked_cb()
 {
 	int bet;
 	int cbet;
-	int bank;
 	const gchar *entry_text;
 	bet=0;
 	entry_text=gtk_label_get_text(GTK_LABEL (g_cbet));
 	cbet=atoi(entry_text);
-	entry_text=gtk_label_get_text(GTK_LABEL (g_bank));
-	bank=atoi(entry_text);
+
 	if(bet<cbet)
 	{
 		
@@ -368,7 +366,7 @@ extern "C" void call_clicked_cb()
 			entry_text=g_strdup_printf("%i", bank);
 			gtk_label_set_text(GTK_LABEL(g_bank),  entry_text);// set lbls
 			j=j.set_a(j,"B");		
-			std::cerr<<j<<endl;
+			std::cerr<<j<<std::endl;
 			send(j);
 			//send();	
 	}
@@ -382,7 +380,7 @@ extern "C" void call_clicked_cb()
 extern "C" void fold_clicked_cb()
 {
 		j=j.set_a(j,"F");	
-		std::cerr<<j<<endl;
+		std::cerr<<j<<std::endl;
 		send(j);	//send
 }
 
@@ -422,7 +420,7 @@ extern "C" void exchange_clicked_cb()
 		j=j.set_a(j,"E");
 		j=j.set_te(j,te);
 			
-		std::cerr<<j<<endl;
+		std::cerr<<j<<std::endl;
 		send(j);
 	//std::cerr<<te;
 }
