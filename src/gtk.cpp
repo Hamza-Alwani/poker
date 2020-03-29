@@ -13,14 +13,6 @@
 #include "json.hpp"
 #include <gtk/gtk.h>
 
-
-
-
-
-
-
-
-
 	GtkWidget   *g_card1;
 	GtkWidget   *g_card2;
 	GtkWidget   *g_card3;
@@ -54,6 +46,8 @@ public:
   {
     do_connect(endpoints);
   }
+
+
 
   void write(const chat_message& msg)
   {
@@ -104,6 +98,74 @@ private:
         });
   }
 
+void setup(std::string s)
+{
+	int pos;
+	std::string card1;
+	std::string card2;
+	std::string card3;
+	std::string card4;
+	std::string card5;
+	std::string action;
+	std::string cbet;
+	std::string pot;
+	
+	pos=s.find(",\"card1\"");
+	pos=pos+10;
+	card1=s.substr(pos,3);
+	pos=s.find(",\"card2\"");
+	pos=pos+10;
+	card2=s.substr(pos,3);
+	pos=s.find(",\"card3\"");
+	pos=pos+10;
+	card3=s.substr(pos,3);
+	pos=s.find(",\"card4\"");
+	pos=pos+10;
+	card4=s.substr(pos,3);
+	pos=s.find(",\"card5\"");
+	pos=pos+10;
+	card5=s.substr(80,3);	
+	action=s.substr(12,1);	
+	pos=s.find(",\"pot\"");
+	pos=pos-98;
+	cbet=s.substr(98,1);
+	pos=s.length();
+	pos=pos-106;
+	pot=s.substr(106,1);	
+	char temp[30];	
+	
+	int cb;//=stoi(cbet);
+	int p;//=stoi(pot);
+	
+	std::istringstream(cbet)>>cb;
+	std::istringstream(pot)>>p;
+	
+	j=j.create(card1,card2,card3,card4,card5,action," ",cb,p);	
+//	std::cerr<<j.dump();
+	std::cerr<<j.dupm()<<endl;
+	strcpy(temp,card1.c_str());
+	gtk_button_set_label(GTK_BUTTON(g_card1),  temp);
+	
+	strcpy(temp,card2.c_str());
+	gtk_button_set_label(GTK_BUTTON(g_card2),  temp);
+	
+	strcpy(temp,card3.c_str());
+	gtk_button_set_label(GTK_BUTTON(g_card3),  temp);
+	
+	strcpy(temp,card4.c_str());
+	gtk_button_set_label(GTK_BUTTON(g_card4),  temp);
+	
+	strcpy(temp,card5.c_str());
+	gtk_button_set_label(GTK_BUTTON(g_card5),  temp);
+	
+	strcpy(temp,cbet.c_str());
+	gtk_label_set_text(GTK_LABEL(g_cbet), temp);
+	
+	strcpy(temp,pot.c_str());
+	gtk_label_set_text(GTK_LABEL(g_cpot), temp);  
+}
+ 
+ 
   void do_read_body()
   {
     asio::async_read(socket_,
@@ -113,14 +175,12 @@ private:
           if (!ec)
           {
             char outline[read_msg_.body_length() + 2];
-                                       // '\n' + '\0' is 2 more chars
+            // '\n' + '\0' is 2 more chars
             outline[0] = '\n';
             outline[read_msg_.body_length() + 1] = '\0';
             std::memcpy ( &outline[1], read_msg_.body(), read_msg_.body_length() );
-            std::cerr<<outline;
-           // gtk_label_set_text (GTK_LABEL(g_card1), outline);
-           // std::cout.write(read_msg_.body(), read_msg_.body_length());
-            //std::cout << "\n";
+            std::string str(outline);
+	        setup(str);     
             do_read_header();
           }
           else
@@ -162,50 +222,19 @@ private:
 // global symbols
 chat_client *c;
 
-
-
-
-static void sendCallback(GtkWidget *widget, GdkEventButton *event, gpointer callback_data)
+void send (nlohmann::json a)
 {
-   std::cerr << "send button pressed: " << event->button << std::endl;
-
-   GtkWidget *callbackWidget = (GtkWidget*) callback_data;
-   assert ( callbackWidget );
-
-   GtkTextBuffer *toBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (callbackWidget));
-
-   GtkTextIter start;
-   GtkTextIter end;
-
-   gtk_text_buffer_get_start_iter ( toBuffer, &start );
-   gtk_text_buffer_get_end_iter ( toBuffer, &end );
-
-   gchar *text = gtk_text_buffer_get_text ( toBuffer, &start, &end, FALSE );
-
-   if (text)
-   {
-      chat_message msg;
-      msg.body_length ( strlen(text) );
-      std::memcpy(msg.body(), text, msg.body_length());
-      msg.encode_header();
-      assert ( c );  // this is a global class
-      c->write(msg);
-   }
-   gtk_text_buffer_set_text ( toBuffer, "", -1 );
+	std::string temp;
+	temp=j.dump();
+	char text[514];
+	strcpy(text,temp.c_str());
+	chat_message msg;
+    msg.body_length ( strlen(text) );
+    std::memcpy(msg.body(), text, msg.body_length());
+    msg.encode_header();
+    assert ( c );  // this is a global class
+    c->write(msg);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 int main(int argc, char* argv[])
 {
@@ -215,7 +244,6 @@ int main(int argc, char* argv[])
       std::cerr << "Usage: chat_client <host> <port>\n";
       return 1;
    }
-   
 	GtkBuilder  *builder; 
 	GtkWidget   *window ;
     gtk_init(&argc, &argv);
@@ -228,7 +256,6 @@ int main(int argc, char* argv[])
     g_card3 = GTK_WIDGET(gtk_builder_get_object(builder, "card3"));
     g_card4 = GTK_WIDGET(gtk_builder_get_object(builder, "card4"));
     g_card5 = GTK_WIDGET(gtk_builder_get_object(builder, "card5"));
-    
     g_bank=GTK_WIDGET(gtk_builder_get_object(builder, "bank_int_lbl"));
     g_cbet=GTK_WIDGET(gtk_builder_get_object(builder, "cbet_lbl_int"));
     g_cpot=GTK_WIDGET(gtk_builder_get_object(builder, "pot_lbl_int"));
@@ -236,28 +263,21 @@ int main(int argc, char* argv[])
     g_bet_hldr=GTK_WIDGET(gtk_builder_get_object(builder,"bet_hldr"));
     g_err_lbl=GTK_WIDGET(gtk_builder_get_object(builder,"err_lbl"));
     g_exchange_button=GTK_WIDGET(gtk_builder_get_object(builder,"exchange_button"));
-   // gtk_label_set_text(GTK_LABEL(g_bank), "100");// set lables
-    
+
     g_object_unref(builder);
     gtk_widget_show(window); 
-             
-    
-
-   
 	gtk_label_set_text(GTK_LABEL(g_bank), "100");// set lbls
    	asio::io_context io_context;
-   
+    tcp::resolver resolver(io_context);
+    auto endpoints = resolver.resolve(argv[1], argv[2]);
+    c = new chat_client(io_context, endpoints);
+    assert(c);
+    std::thread t([&io_context](){ io_context.run(); });
+    gtk_main();
+    c->close();
+    t.join();
 
-   tcp::resolver resolver(io_context);
-   auto endpoints = resolver.resolve(argv[1], argv[2]);
-   c = new chat_client(io_context, endpoints);
-   assert(c);
-   std::thread t([&io_context](){ io_context.run(); });
-   gtk_main();
-   c->close();
-   t.join();
-
-  return 0;
+return 0;
 }
 
 
@@ -272,7 +292,6 @@ extern "C" void check_clicked_cb()
 	int cbet;
 	int bank;
 	const gchar *entry_text;
-	
 	bet=0;
 	entry_text=gtk_label_get_text(GTK_LABEL (g_cbet));
 	cbet=atoi(entry_text);
@@ -280,17 +299,13 @@ extern "C" void check_clicked_cb()
 	bank=atoi(entry_text);
 	if(bet<cbet)
 	{
-		//std::cerr<<"bet must be bigger than current bet";
+		
 		gtk_label_set_text(GTK_LABEL(g_err_lbl), "bet must be bigger than current bet" );
 	}
 	else
 	{
-			//bank=bank-bet;
-			//entry_text=g_strdup_printf("%i", bank);
-			//gtk_label_set_text(GTK_LABEL(g_bank),  entry_text);// set lbls
-
-			//send();
-			//std::cerr<<"in works";
+		j=j.set_a(j,"B");
+		send(j);
 	}
 	
 }
@@ -316,21 +331,20 @@ extern "C" void bet_clicked_cb()
 		if(bet<cbet)
 		{
 		gtk_label_set_text(GTK_LABEL(g_err_lbl), "bet must be bigger than current bet" );
-		//std::cerr<<"bet must be bigger than current bet";
 		}
 		else
 		{
 			bank=bank-bet;
 			entry_text=g_strdup_printf("%i", bank);
 			gtk_label_set_text(GTK_LABEL(g_bank),  entry_text);// set lbls
-
-			//send();
+			j=j.set_a(j,"B");	
+			send(j);
 		}
 	}
 	else
 	{
 		gtk_label_set_text(GTK_LABEL(g_err_lbl), "bet is bigger than bank" );
-		//std::cerr<<"bet is bigger than bank";
+	
 	}
 }
 
@@ -353,6 +367,9 @@ extern "C" void call_clicked_cb()
 			bank=bank-cbet;
 			entry_text=g_strdup_printf("%i", bank);
 			gtk_label_set_text(GTK_LABEL(g_bank),  entry_text);// set lbls
+			j=j.set_a(j,"B");		
+			std::cerr<<j<<endl;
+			send(j);
 			//send();	
 	}
 	else
@@ -364,7 +381,9 @@ extern "C" void call_clicked_cb()
 
 extern "C" void fold_clicked_cb()
 {
-	//send
+		j=j.set_a(j,"F");	
+		std::cerr<<j<<endl;
+		send(j);	//send
 }
 
 extern "C" void exchange_clicked_cb()
@@ -376,7 +395,6 @@ extern "C" void exchange_clicked_cb()
 	if((c1==TRUE)&&(c2==TRUE)&&(c3==TRUE)&&(c4==TRUE)&&(c5==TRUE))
 	{
 	gtk_label_set_text(GTK_LABEL(g_err_lbl), "can only exchange 0-4 cards" );
-		//std::cerr<<"can only exchange 0-4 cards";
 	}
 	else
 	{
@@ -401,6 +419,11 @@ extern "C" void exchange_clicked_cb()
 			te= te+ "" +"5 ";
 		}
 	}
+		j=j.set_a(j,"E");
+		j=j.set_te(j,te);
+			
+		std::cerr<<j<<endl;
+		send(j);
 	//std::cerr<<te;
 }
 
