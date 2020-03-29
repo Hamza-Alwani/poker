@@ -3,6 +3,7 @@
 To run:
 
 make clean
+
 make
 
 ./src/dealer 9000
