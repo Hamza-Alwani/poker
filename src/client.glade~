@@ -8,29 +8,29 @@
     <property name="page_increment">10</property>
   </object>
   <object class="GtkImage" id="image1">
+    <property name="name">image1</property>
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixbuf">../include/png_new/Webp.net-resizeimage.png</property>
   </object>
   <object class="GtkImage" id="image2">
+    <property name="name">image2</property>
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixbuf">../include/png_new/Webp.net-resizeimage.png</property>
   </object>
   <object class="GtkImage" id="image3">
+    <property name="name">image3</property>
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixbuf">../include/png_new/Webp.net-resizeimage.png</property>
   </object>
   <object class="GtkImage" id="image4">
+    <property name="name">image4</property>
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixbuf">../include/png_new/Webp.net-resizeimage.png</property>
   </object>
   <object class="GtkImage" id="image5">
+    <property name="name">image5</property>
     <property name="visible">True</property>
     <property name="can_focus">False</property>
-    <property name="pixbuf">../include/png_new/Webp.net-resizeimage.png</property>
   </object>
   <object class="GtkWindow" id="main_window">
     <property name="name">main_window</property>
@@ -55,7 +55,6 @@
             <property name="homogeneous">True</property>
             <child>
               <object class="GtkToggleButton" id="card1">
-                <property name="related_action"/>
                 <property name="name">card1</property>
                 <property name="width_request">180</property>
                 <property name="height_request">300</property>
@@ -122,8 +121,6 @@
             </child>
             <child>
               <object class="GtkToggleButton" id="card5">
-                <property name="label" translatable="yes">
-</property>
                 <property name="name">card5</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>

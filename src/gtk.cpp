@@ -303,6 +303,14 @@ int main(int argc, char* argv[])
     g_img3=GTK_WIDGET(gtk_builder_get_object(builder,"image3"));
     g_img4=GTK_WIDGET(gtk_builder_get_object(builder,"image4"));
     g_img5=GTK_WIDGET(gtk_builder_get_object(builder,"image5"));
+    
+    
+    
+    gtk_image_set_from_file (GTK_IMAGE (g_img1), "include/card_deck/Red_back.jpg");
+    gtk_image_set_from_file (GTK_IMAGE (g_img2), "include/card_deck/Red_back.jpg");
+    gtk_image_set_from_file (GTK_IMAGE (g_img3), "include/card_deck/Red_back.jpg");
+    gtk_image_set_from_file (GTK_IMAGE (g_img4), "include/card_deck/Red_back.jpg");
+    gtk_image_set_from_file (GTK_IMAGE (g_img5), "include/card_deck/Red_back.jpg");
 
     g_object_unref(builder);
     gtk_widget_show(window); 
@@ -399,7 +407,6 @@ extern "C" void call_clicked_cb()
 			entry_text=g_strdup_printf("%i", bank);
 			gtk_label_set_text(GTK_LABEL(g_bank),  entry_text);// set lbls
 			j=j.set_a(j,"B");		
-			std::cerr<<j<<std::endl;
 			send(j);
 			//send();	
 	}

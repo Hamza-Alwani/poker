@@ -121,8 +121,6 @@
             </child>
             <child>
               <object class="GtkToggleButton" id="card5">
-                <property name="label" translatable="yes">
-</property>
                 <property name="name">card5</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
