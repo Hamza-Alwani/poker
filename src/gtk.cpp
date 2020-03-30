@@ -133,13 +133,13 @@ void setup(std::string s)
 	action=s.substr(12,1);	
 
 	//pos=s.find(",\"pot\"");
-	pos=s.find(",\"currentbet\"") +12;
+	pos=s.find(",\"currentbet\"") +14;
 	int len=0;
 	len=s.find(",\"pot\"")-pos;
 	cbet=s.substr(pos,len);
 	
 	pos=s.find(",\"pot\"")+7;
-	len=s.length()-pos;
+	len= s.find(",\"toexchange\"")-pos;
 	pot=s.substr(pos,len);	
 	char temp[300];	
 	
@@ -193,11 +193,11 @@ void setup(std::string s)
 //	strcpy(temp,card5.c_str());
 //	gtk_button_set_label(GTK_BUTTON(g_card5),  temp);
 //	
-//	strcpy(temp,cbet.c_str());
-//	gtk_label_set_text(GTK_LABEL(g_cbet), temp);
-//	
-//	strcpy(temp,pot.c_str());
-//	gtk_label_set_text(GTK_LABEL(g_cpot), temp);  
+	strcpy(temp,cbet.c_str());
+	gtk_label_set_text(GTK_LABEL(g_cbet), temp);
+	
+	strcpy(temp,pot.c_str());
+	gtk_label_set_text(GTK_LABEL(g_cpot), temp);  
 }
  
  

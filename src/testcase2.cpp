@@ -153,15 +153,15 @@ int main(int argc, char* argv[])
   
   j=
   {	  		
-			{"card1","2D"},
-    		{"card2","3H"},
-    		{"card3","KS"},
-    		{"card4","QC"},
-    		{"card5","KD"},
+			{"card1","3D"},
+    		{"card2","KH"},
+    		{"card3","AS"},
+    		{"card4","QH"},
+    		{"card5","AD"},
     		{"action", " "},
-    		{"currentbet", 5},
+    		{"currentbet", 110},
     		{"toexchange", ""},
-    		{"pot",10}
+    		{"pot",100}
   };
 	
 	strcpy(line,j.dump().c_str());

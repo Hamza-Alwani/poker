@@ -6,10 +6,7 @@ using json = nlohmann::json;
 
 nlohmann::json create(std::string c1,std::string c2,std::string c3,std::string c4,std::string c5,std::string a,std::string te,int cbet,int p)
 	{
-		json k{
-    
-   		 	
-    		
+		json k{  		
     		{"action", a},
 			{"card1",c1},
     		{"card2",c2},
