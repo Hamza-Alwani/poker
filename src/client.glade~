@@ -7,6 +7,31 @@
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
+  <object class="GtkImage" id="image1">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">../include/png_new/Webp.net-resizeimage.png</property>
+  </object>
+  <object class="GtkImage" id="image2">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">../include/png_new/Webp.net-resizeimage.png</property>
+  </object>
+  <object class="GtkImage" id="image3">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">../include/png_new/Webp.net-resizeimage.png</property>
+  </object>
+  <object class="GtkImage" id="image4">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">../include/png_new/Webp.net-resizeimage.png</property>
+  </object>
+  <object class="GtkImage" id="image5">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">../include/png_new/Webp.net-resizeimage.png</property>
+  </object>
   <object class="GtkWindow" id="main_window">
     <property name="name">main_window</property>
     <property name="width_request">950</property>
@@ -30,15 +55,15 @@
             <property name="homogeneous">True</property>
             <child>
               <object class="GtkToggleButton" id="card1">
-                <property name="label" translatable="yes">card1</property>
                 <property name="related_action"/>
                 <property name="name">card1</property>
-                <property name="width_request">182</property>
-                <property name="height_request">311</property>
+                <property name="width_request">180</property>
+                <property name="height_request">300</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="image_position">right</property>
+                <property name="image">image1</property>
+                <property name="image_position">bottom</property>
                 <signal name="toggled" handler="on_card1_toggled" swapped="no"/>
               </object>
               <packing>
@@ -49,11 +74,12 @@
             </child>
             <child>
               <object class="GtkToggleButton" id="card2">
-                <property name="label" translatable="yes">card2</property>
                 <property name="name">card2</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="image">image2</property>
+                <property name="image_position">bottom</property>
                 <signal name="toggled" handler="on_card2_toggled" swapped="no"/>
               </object>
               <packing>
@@ -64,11 +90,12 @@
             </child>
             <child>
               <object class="GtkToggleButton" id="card3">
-                <property name="label" translatable="yes">card3</property>
                 <property name="name">card3</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="image">image3</property>
+                <property name="image_position">bottom</property>
                 <signal name="toggled" handler="on_card3_toggled" swapped="no"/>
               </object>
               <packing>
@@ -79,11 +106,12 @@
             </child>
             <child>
               <object class="GtkToggleButton" id="card4">
-                <property name="label" translatable="yes">card4</property>
                 <property name="name">card4</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="image">image4</property>
+                <property name="image_position">bottom</property>
                 <signal name="toggled" handler="on_card4_toggled" swapped="no"/>
               </object>
               <packing>
@@ -94,12 +122,15 @@
             </child>
             <child>
               <object class="GtkToggleButton" id="card5">
-                <property name="label" translatable="yes">card5
+                <property name="label" translatable="yes">
 </property>
                 <property name="name">card5</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="image">image5</property>
+                <property name="image_position">bottom</property>
+                <property name="always_show_image">True</property>
                 <signal name="toggled" handler="on_card5_toggled" swapped="no"/>
               </object>
               <packing>

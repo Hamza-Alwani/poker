@@ -23,6 +23,11 @@
 	GtkWidget   *g_cbet;
 	GtkWidget	*g_bet_hldr;
 	GtkWidget	*g_exchange_button;
+	GtkWidget	*g_img1;
+	GtkWidget	*g_img2;
+	GtkWidget	*g_img3;
+	GtkWidget	*g_img4;
+	GtkWidget	*g_img5;
 	GtkWidget	*g_err_lbl;
 	bool 		c1=FALSE;
 	bool 		c2=FALSE;
@@ -112,57 +117,87 @@ void setup(std::string s)
 	
 	pos=s.find(",\"card1\"");
 	pos=pos+10;
-	card1=s.substr(pos,3);
+	card1=s.substr(pos,2);
 	pos=s.find(",\"card2\"");
 	pos=pos+10;
-	card2=s.substr(pos,3);
+	card2=s.substr(pos,2);
 	pos=s.find(",\"card3\"");
 	pos=pos+10;
-	card3=s.substr(pos,3);
+	card3=s.substr(pos,2);
 	pos=s.find(",\"card4\"");
 	pos=pos+10;
-	card4=s.substr(pos,3);
+	card4=s.substr(pos,2);
 	pos=s.find(",\"card5\"");
 	pos=pos+10;
-	card5=s.substr(80,3);	
+	card5=s.substr(pos,2);	
 	action=s.substr(12,1);	
-	pos=s.find(",\"pot\"");
-	pos=pos-98;
-	cbet=s.substr(98,1);
-	pos=s.length();
-	pos=pos-106;
-	pot=s.substr(106,1);	
-	char temp[30];	
+
+	//pos=s.find(",\"pot\"");
+	pos=s.find(",\"currentbet\"") +12;
+	int len=0;
+	len=s.find(",\"pot\"")-pos;
+	cbet=s.substr(pos,len);
 	
+	pos=s.find(",\"pot\"")+7;
+	len=s.length()-pos;
+	pot=s.substr(pos,len);	
+	char temp[300];	
+	
+
 	int cb;//=stoi(cbet);
 	int p;//=stoi(pot);
 	
 	std::istringstream(cbet)>>cb;
 	std::istringstream(pot)>>p;
 	
-	j=j.create(card1,card2,card3,card4,card5,action," ",cb,p);	
+	j=j.create(card1,card2,card3,card4,card5,action," ",cb,p);
+	std::string dest;
+	//include/card_deck/2C.jpg
+	dest="include/card_deck/"+card1+".jpg";
+	strcpy(temp,dest.c_str());
+	gtk_image_set_from_file (GTK_IMAGE (g_img1), temp);
+	
+	dest="include/card_deck/"+card2+".jpg";
+	strcpy(temp,dest.c_str());
+	gtk_image_set_from_file (GTK_IMAGE (g_img2), temp);
+	
+	dest="include/card_deck/"+card3+".jpg";
+	strcpy(temp,dest.c_str());
+	gtk_image_set_from_file (GTK_IMAGE (g_img3), temp);
+	
+	dest="include/card_deck/"+card4+".jpg";
+	strcpy(temp,dest.c_str());
+	gtk_image_set_from_file (GTK_IMAGE (g_img4), temp);
+	
+	dest="include/card_deck/"+card5+".jpg";
+	strcpy(temp,dest.c_str());
+	gtk_image_set_from_file (GTK_IMAGE (g_img5), temp);
+	
+	
+	
+		
 //	std::cerr<<j.dump();
-	std::cerr<<j.dump()<<std::endl;
-	strcpy(temp,card1.c_str());
-	gtk_button_set_label(GTK_BUTTON(g_card1),  temp);
-	
-	strcpy(temp,card2.c_str());
-	gtk_button_set_label(GTK_BUTTON(g_card2),  temp);
-	
-	strcpy(temp,card3.c_str());
-	gtk_button_set_label(GTK_BUTTON(g_card3),  temp);
-	
-	strcpy(temp,card4.c_str());
-	gtk_button_set_label(GTK_BUTTON(g_card4),  temp);
-	
-	strcpy(temp,card5.c_str());
-	gtk_button_set_label(GTK_BUTTON(g_card5),  temp);
-	
-	strcpy(temp,cbet.c_str());
-	gtk_label_set_text(GTK_LABEL(g_cbet), temp);
-	
-	strcpy(temp,pot.c_str());
-	gtk_label_set_text(GTK_LABEL(g_cpot), temp);  
+//	std::cerr<<j.dump()<<std::endl;
+//	strcpy(temp,card1.c_str());
+//	gtk_button_set_label(GTK_BUTTON(g_card1),  temp);
+//	
+//	strcpy(temp,card2.c_str());
+//	gtk_button_set_label(GTK_BUTTON(g_card2),  temp);
+//	
+//	strcpy(temp,card3.c_str());
+//	gtk_button_set_label(GTK_BUTTON(g_card3),  temp);
+//	
+//	strcpy(temp,card4.c_str());
+//	gtk_button_set_label(GTK_BUTTON(g_card4),  temp);
+//	
+//	strcpy(temp,card5.c_str());
+//	gtk_button_set_label(GTK_BUTTON(g_card5),  temp);
+//	
+//	strcpy(temp,cbet.c_str());
+//	gtk_label_set_text(GTK_LABEL(g_cbet), temp);
+//	
+//	strcpy(temp,pot.c_str());
+//	gtk_label_set_text(GTK_LABEL(g_cpot), temp);  
 }
  
  
@@ -263,6 +298,11 @@ int main(int argc, char* argv[])
     g_bet_hldr=GTK_WIDGET(gtk_builder_get_object(builder,"bet_hldr"));
     g_err_lbl=GTK_WIDGET(gtk_builder_get_object(builder,"err_lbl"));
     g_exchange_button=GTK_WIDGET(gtk_builder_get_object(builder,"exchange_button"));
+    g_img1=GTK_WIDGET(gtk_builder_get_object(builder,"image1"));
+    g_img2=GTK_WIDGET(gtk_builder_get_object(builder,"image2"));
+    g_img3=GTK_WIDGET(gtk_builder_get_object(builder,"image3"));
+    g_img4=GTK_WIDGET(gtk_builder_get_object(builder,"image4"));
+    g_img5=GTK_WIDGET(gtk_builder_get_object(builder,"image5"));
 
     g_object_unref(builder);
     gtk_widget_show(window); 
@@ -279,12 +319,6 @@ int main(int argc, char* argv[])
 
 return 0;
 }
-
-
-
-
-
-
 
 extern "C" void check_clicked_cb()
 {
@@ -307,7 +341,6 @@ extern "C" void check_clicked_cb()
 	}
 	
 }
-
 
 extern "C" void bet_clicked_cb()
 {

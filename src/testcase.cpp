@@ -153,11 +153,11 @@ int main(int argc, char* argv[])
   
   j=
   {	  		
-			{"card1","2-D"},
-    		{"card2","3-H"},
-    		{"card3","K-S"},
-    		{"card4","Q-C"},
-    		{"card5","K-D"},
+			{"card1","2D"},
+    		{"card2","3H"},
+    		{"card3","KS"},
+    		{"card4","QC"},
+    		{"card5","KD"},
     		{"action", " "},
     		{"currentbet", 0},
     		{"currentbet", " "},
