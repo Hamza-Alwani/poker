@@ -1,7 +1,7 @@
 # this is an example makefile for the first homework
 # assignment this semester
 
-all:  asio-1.12.2    src/gtk src/dealer src/json src/testcase src/testcase2
+all:  asio-1.12.2    src/gtk src/dealer src/json 
 #src/chat_client 
 
 asio-1.12.2:
@@ -24,14 +24,11 @@ LDLIBS+=-lpthread ${GTKLINKFLAGS}
 
 clean:
 	-rm -rf asio-1.12.2
-	-rm -f src/player
 	-rm -f src/dealer		
 	-rm -f src/json
-	-rm -f src/global
 	-rm -f src/chat_client
 	-rm -f src/gtk
-	-rm -f src/testcase
-	-rm -f src/testcase2
+
 	
 	
     
