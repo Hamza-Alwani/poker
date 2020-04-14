@@ -35,6 +35,7 @@
 	bool 		c4=FALSE;
 	bool 		c5=FALSE;
 	nlohmann::json j;
+	std::string ip;
 	
 	
 using asio::ip::tcp;
@@ -114,7 +115,56 @@ void setup(std::string s)
 	std::string action;
 	std::string cbet;
 	std::string pot;
+	std::string tid;
 	
+	if((s.find("\"action\":\"R\"")!=-1))
+	{
+		nlohmann::json test{
+						"join",
+						ip
+						};
+						
+		char temp[300];
+		std::string t;
+		t=test.dump();
+		strcpy(temp,t.c_str());
+		chat_message msg;
+    	msg.body_length ( strlen(temp) );
+    	std::memcpy(msg.body(), temp, msg.body_length());
+    	msg.encode_header();
+    	write(msg);
+    	gtk_label_get_text(GTK_LABEL (g_bank));
+    	gtk_toggle_button_set_mode(GTK_TOGGLE_BUTTON (g_card1),FALSE);
+    	gtk_toggle_button_set_mode(GTK_TOGGLE_BUTTON (g_card2),FALSE);
+    	gtk_toggle_button_set_mode(GTK_TOGGLE_BUTTON (g_card3),FALSE);
+    	gtk_toggle_button_set_mode(GTK_TOGGLE_BUTTON (g_card4),FALSE);
+    	gtk_toggle_button_set_mode(GTK_TOGGLE_BUTTON (g_card5),FALSE);
+    	    	    	    	   
+	}
+	
+	
+	if((s.find("\"action\":\"W\"")!=-1))
+	{
+		int pos,len;
+		pos=s.find(",\"pot\"")+7;
+		len=s.find("}")-pos;
+		std::string pot;
+		int p;
+		
+		pot=s.substr(pos,len);
+		std::istringstream(pot)>>p;
+		const gchar *entry_text;
+		entry_text=gtk_label_get_text(GTK_LABEL (g_bank));
+		
+		p=p+atoi(entry_text);
+		
+		
+		entry_text=g_strdup_printf("%i", p);
+		gtk_label_set_text(GTK_LABEL(g_bank), entry_text);
+		
+	}
+	else if(s.find("\"action\":\"S\"")!=-1)
+	{
 	pos=s.find(",\"card1\"");
 	pos=pos+10;
 	card1=s.substr(pos,2);
@@ -131,13 +181,12 @@ void setup(std::string s)
 	pos=pos+10;
 	card5=s.substr(pos,2);	
 	action=s.substr(12,1);	
-
 	//pos=s.find(",\"pot\"");
 	pos=s.find(",\"currentbet\"") +14;
 	int len=0;
 	len=s.find(",\"pot\"")-pos;
 	cbet=s.substr(pos,len);
-	
+
 	pos=s.find(",\"pot\"")+7;
 	len= s.find(",\"toexchange\"")-pos;
 	pot=s.substr(pos,len);	
@@ -150,7 +199,7 @@ void setup(std::string s)
 	std::istringstream(cbet)>>cb;
 	std::istringstream(pot)>>p;
 	
-	j=j.create(card1,card2,card3,card4,card5,action," ",cb,p);
+	j=j.create(ip,card1,card2,card3,card4,card5,action," ",cb,p);
 	std::string dest;
 	//include/card_deck/2C.jpg
 	dest="include/card_deck/"+card1+".jpg";
@@ -172,32 +221,33 @@ void setup(std::string s)
 	dest="include/card_deck/"+card5+".jpg";
 	strcpy(temp,dest.c_str());
 	gtk_image_set_from_file (GTK_IMAGE (g_img5), temp);
-	
-	
-	
-		
-//	std::cerr<<j.dump();
-//	std::cerr<<j.dump()<<std::endl;
-//	strcpy(temp,card1.c_str());
-//	gtk_button_set_label(GTK_BUTTON(g_card1),  temp);
-//	
-//	strcpy(temp,card2.c_str());
-//	gtk_button_set_label(GTK_BUTTON(g_card2),  temp);
-//	
-//	strcpy(temp,card3.c_str());
-//	gtk_button_set_label(GTK_BUTTON(g_card3),  temp);
-//	
-//	strcpy(temp,card4.c_str());
-//	gtk_button_set_label(GTK_BUTTON(g_card4),  temp);
-//	
-//	strcpy(temp,card5.c_str());
-//	gtk_button_set_label(GTK_BUTTON(g_card5),  temp);
-//	
 	strcpy(temp,cbet.c_str());
 	gtk_label_set_text(GTK_LABEL(g_cbet), temp);
 	
 	strcpy(temp,pot.c_str());
 	gtk_label_set_text(GTK_LABEL(g_cpot), temp);  
+	
+	}else if((s.find("\"action\":\"U\"")!=-1))
+	{
+		char temp[300];	
+		pos=s.find(",\"currentbet\"") +14;
+		int len=0;
+		len=s.find(",\"pot\"")-pos;
+		cbet=s.substr(pos,len);
+		strcpy(temp,cbet.c_str());
+		gtk_label_set_text(GTK_LABEL(g_cbet), temp);
+		
+		
+		pos=s.find(",\"pot\"");
+		pos=pos+7;
+		len=s.find("}")-pos;
+		pot=s.substr(pos,len);
+		strcpy(temp,pot.c_str());
+		gtk_label_set_text(GTK_LABEL(g_cpot), temp);
+		
+	}
+
+	
 }
  
  
@@ -209,13 +259,29 @@ void setup(std::string s)
         {
           if (!ec)
           {
+          std::cout.write(read_msg_.body(), read_msg_.body_length()); //cse3310 message body is received from the server
+            std::cout <<"\n";
             char outline[read_msg_.body_length() + 2];
             // '\n' + '\0' is 2 more chars
             outline[0] = '\n';
             outline[read_msg_.body_length() + 1] = '\0';
             std::memcpy ( &outline[1], read_msg_.body(), read_msg_.body_length() );
             std::string str(outline);
-	        setup(str);     
+            
+			int pos;
+			int len;
+			std::string tid;            
+
+			pos=str.find(",\"0\"");
+			pos= pos+9;
+			len=str.find("\",\"action")-pos;
+			tid=str.substr(pos,len);
+			std::cerr<<tid<<std::endl;
+            if(ip==tid)
+            {
+            	std::cerr<<"in here";
+            	setup(str);
+            }
             do_read_header();
           }
           else
@@ -247,6 +313,8 @@ void setup(std::string s)
         });
   }
 
+	
+	
 private:
   asio::io_context& io_context_;
   tcp::socket socket_;
@@ -260,7 +328,7 @@ chat_client *c;
 void send (nlohmann::json a)
 {
 	std::string temp;
-	temp=j.dump();
+	temp=a.dump();
 	char text[514];
 	strcpy(text,temp.c_str());
 	chat_message msg;
@@ -305,7 +373,6 @@ int main(int argc, char* argv[])
     g_img5=GTK_WIDGET(gtk_builder_get_object(builder,"image5"));
     
     
-    
     gtk_image_set_from_file (GTK_IMAGE (g_img1), "include/card_deck/Red_back.jpg");
     gtk_image_set_from_file (GTK_IMAGE (g_img2), "include/card_deck/Red_back.jpg");
     gtk_image_set_from_file (GTK_IMAGE (g_img3), "include/card_deck/Red_back.jpg");
@@ -314,19 +381,49 @@ int main(int argc, char* argv[])
 
     g_object_unref(builder);
     gtk_widget_show(window); 
-	gtk_label_set_text(GTK_LABEL(g_bank), "100");// set lbls
+	gtk_label_set_text(GTK_LABEL(g_bank), "100");
+	
    	asio::io_context io_context;
     tcp::resolver resolver(io_context);
     auto endpoints = resolver.resolve(argv[1], argv[2]);
+    ip=argv[1];
+	j=j.set_id(j,ip);
+	std::cerr<<"ip=" <<ip<<std::endl;
+	nlohmann::json test{
+	"join",
+	ip
+	};
+	
     c = new chat_client(io_context, endpoints);
     assert(c);
     std::thread t([&io_context](){ io_context.run(); });
+	send(test);
     gtk_main();
     c->close();
     t.join();
-
 return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 extern "C" void check_clicked_cb()
 {
@@ -345,6 +442,7 @@ extern "C" void check_clicked_cb()
 	else
 	{
 		j=j.set_a(j,"B");
+		j=j.set_cbet(j,0);
 		send(j);
 	}
 	
@@ -365,7 +463,7 @@ extern "C" void bet_clicked_cb()
 	entry_text=gtk_label_get_text(GTK_LABEL (g_bank));
 	bank=atoi(entry_text);
 	
-	if(bet<bank)
+	if(bet<=bank)
 	{
 		if(bet<cbet)
 		{
@@ -377,6 +475,8 @@ extern "C" void bet_clicked_cb()
 			entry_text=g_strdup_printf("%i", bank);
 			gtk_label_set_text(GTK_LABEL(g_bank),  entry_text);// set lbls
 			j=j.set_a(j,"B");	
+			j=j.set_cbet(j,bet);
+			std::cout<<j;
 			send(j);
 		}
 	}
@@ -406,7 +506,8 @@ extern "C" void call_clicked_cb()
 			bank=bank-cbet;
 			entry_text=g_strdup_printf("%i", bank);
 			gtk_label_set_text(GTK_LABEL(g_bank),  entry_text);// set lbls
-			j=j.set_a(j,"B");		
+			j=j.set_a(j,"B");
+			j=j.set_cbet(j,cbet);				
 			send(j);
 			//send();	
 	}
@@ -420,7 +521,6 @@ extern "C" void call_clicked_cb()
 extern "C" void fold_clicked_cb()
 {
 		j=j.set_a(j,"F");	
-		std::cerr<<j<<std::endl;
 		send(j);	//send
 }
 
@@ -456,12 +556,12 @@ extern "C" void exchange_clicked_cb()
 		{
 			te= te+ "" +"5 ";
 		}
-	}
+	
 		j=j.set_a(j,"E");
 		j=j.set_te(j,te);
-			
-		std::cerr<<j<<std::endl;
+		j=j.set_cbet(j,0);
 		send(j);
+		}
 	//std::cerr<<te;
 }
 

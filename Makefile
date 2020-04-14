@@ -30,6 +30,9 @@ clean:
 	-rm -f src/global
 	-rm -f src/chat_client
 	-rm -f src/gtk
+	-rm -f src/testcase
+	-rm -f src/testcase2
+	
 	
     
 

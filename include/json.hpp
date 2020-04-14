@@ -21545,13 +21545,12 @@ class basic_json
 
 
 //added my own
-nlohmann::json create(std::string c1,std::string c2,std::string c3,std::string c4,std::string c5,std::string a,std::string te,int cbet,int p)
+nlohmann::json create(std::string ip, std::string c1,std::string c2,std::string c3,std::string c4,std::string c5,std::string a,std::string te,int cbet,int p)//, int b)
 	{
-		json k{
-    
-   		 	
-    		
+		json k{  
+			{"0,",ip},	
     		{"action", a},
+    		//{"ammount", b},
 			{"card1",c1},
     		{"card2",c2},
     		{"card3",c3},
@@ -21566,6 +21565,7 @@ nlohmann::json create(std::string c1,std::string c2,std::string c3,std::string c
 }
 
 
+
 nlohmann::json set_a(json k, std::string a)
 	{
 		 k["action"]=a;
@@ -21573,6 +21573,13 @@ nlohmann::json set_a(json k, std::string a)
    		 	
     	return k;
 	}
+	
+	nlohmann::json set_cbet(json k, int a)
+	{
+		 k["currentbet"]=a;	
+    	return k;
+	}
+
 
 nlohmann::json set_te(json k, std::string a)
 	{
@@ -21581,7 +21588,25 @@ nlohmann::json set_te(json k, std::string a)
    		 	
     	return k;
 	}
-
+nlohmann::json set_id(json k, std::string a)
+	{
+		 k["0"]=a;
+    
+   		 	
+    	return k;
+	}
+	
+	nlohmann::json set_pot(json k, int a)
+	{
+		 k["pot"]=a;	
+    	return k;
+	}
+	
+//nlohmann::json set_bet(json k,int b)
+//{
+//		 k["ammount"]=b;	
+//    	return k;
+//}
 
 //end of edit
 
