@@ -255,7 +255,6 @@ private:
        
           	if(str.find("join")!=-1)
            	{
-        	   
         	   	int pos= str.find(",");
         	   	pos=pos+2;
         	   	int len;
@@ -263,14 +262,17 @@ private:
             	std::string temp;
             	temp=str.substr(pos,len);
             	std::cerr<<temp;
-            	pl[tplayer].set_id(temp);
+            	
             	if(inplay==0)	
           		{
           			inplayer++;
-            		pl[tplayer].set_active(1);
+          			pl[inplayer].set_id(temp);
+            		pl[inplayer].set_active(1);
+            		
             	}
             	else
             	{
+            		pl[tplayer].set_id(temp);
             		pl[tplayer].set_active(0);
             	}	
             }
@@ -296,6 +298,7 @@ private:
             else if(tplayer>=1 && inplay==0 && tplayer==inplayer)
            	{
            		std::cerr<<"game start\n";
+           		std::cerr<<"tpalyer="<<tplayer<<"inpplayer"<<inplayer;
            		setup();      
            		cur_state_r1=1; 	
 		    }    
@@ -365,8 +368,10 @@ private:
 		std::memcpy(msg.body(), text, msg.body_length());
 		msg.encode_header();
 		room_.deliver(msg);
-	
   	}
+  	inplayer=-1;
+  	inplay=0;
+
   
   }
   
@@ -395,7 +400,24 @@ private:
 			room_.deliver(msg);
 	  	}
   	}
-  	
+  }
+  void sendex(nlohmann::json j)
+  {
+  	for(int i=0; i<=inplayer;i++)
+  	{
+  		if(pl[i].get_active()==1)
+  		{
+		 	chat_message msg;
+	     	char text[514];
+ 			std::string temp;
+		 	temp=j.dump();
+		 	strcpy(text,temp.c_str());
+   			msg.body_length ( strlen(text) );
+   			std::memcpy(msg.body(), text, msg.body_length());
+  	 		msg.encode_header();
+  			room_.deliver(msg);
+	  	}
+  	}
   
   }
   
@@ -407,6 +429,7 @@ private:
     nlohmann::json j;
     std::string pcard[5];
     active_players=inplayer;
+    pot=inplayer+1;
 		for(int i=0; i<=inplayer;i++)
 		{
 			for(int k=0;k<5;k++)
@@ -415,8 +438,9 @@ private:
 				cardnumber++;
 				
 			}
+			std::cerr<<"for i="<<i<<"id="<<pl[i].get_id();
 			pl[i].set_phand(pcard[0],pcard[1],pcard[2],pcard[3],pcard[4]);
-			j=j.create(pl[i].get_id(),pcard[0],pcard[1],pcard[2],pcard[3],pcard[4],"S",temp,1,pot);
+			j=j.create(pl[i].get_id(),pcard[0],pcard[1],pcard[2],pcard[3],pcard[4],"S",temp,0,pot);
 			send(j);
 		}
 	
@@ -601,7 +625,7 @@ private:
 				}
 			pl[turn].set_phand(cards[0],cards[1],cards[2],cards[3],cards[4]);
 			j=j.create(pl[turn].get_id(),cards[0],cards[1],cards[2],cards[3],cards[4],"S","",0,pot);
-			send(j);	
+			sendex(j);	
 			turn++;	
 		}
 		if(turn>inplayer)
@@ -935,12 +959,11 @@ private:
 	else
 		return value_high(rank);
 
-}
+	}
 
 	int value_high(int val[])
 	{
 		int temp=0;
-		int count=1;
 		for(int a=5;a>=0;a--) //two piar
 		{
 				temp=temp*10;
@@ -1071,8 +1094,9 @@ private:
 		count=0;
 		inplay=0;
 		pot=0;
+		cardnumber=0;
 		sendreset();
-		inplayer=-1;
+		
 
 	}
   

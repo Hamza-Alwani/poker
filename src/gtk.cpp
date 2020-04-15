@@ -119,6 +119,7 @@ void setup(std::string s)
 	
 	if((s.find("\"action\":\"R\"")!=-1))
 	{
+		
 		nlohmann::json test{
 						"join",
 						ip
@@ -133,13 +134,19 @@ void setup(std::string s)
     	std::memcpy(msg.body(), temp, msg.body_length());
     	msg.encode_header();
     	write(msg);
-    	gtk_label_get_text(GTK_LABEL (g_bank));
-    	gtk_toggle_button_set_mode(GTK_TOGGLE_BUTTON (g_card1),FALSE);
-    	gtk_toggle_button_set_mode(GTK_TOGGLE_BUTTON (g_card2),FALSE);
-    	gtk_toggle_button_set_mode(GTK_TOGGLE_BUTTON (g_card3),FALSE);
-    	gtk_toggle_button_set_mode(GTK_TOGGLE_BUTTON (g_card4),FALSE);
-    	gtk_toggle_button_set_mode(GTK_TOGGLE_BUTTON (g_card5),FALSE);
-    	    	    	    	   
+	
+    	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON (g_card1),FALSE);
+    	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON (g_card2),FALSE);
+    	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON (g_card3),FALSE);
+    	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON (g_card4),FALSE);
+    	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON (g_card5),FALSE);
+    	 
+ 		c1=FALSE;
+ 		c2=FALSE;
+ 		c3=FALSE;
+ 		c4=FALSE;
+ 		c5=FALSE;
+    	 
 	}
 	
 	
@@ -199,6 +206,12 @@ void setup(std::string s)
 	std::istringstream(cbet)>>cb;
 	std::istringstream(pot)>>p;
 	
+	const gchar *entry_text;
+	entry_text=gtk_label_get_text(GTK_LABEL (g_bank));
+	p=atoi(entry_text)-1;
+	entry_text=g_strdup_printf("%i", p);
+	gtk_label_set_text(GTK_LABEL(g_bank), entry_text);
+	
 	j=j.create(ip,card1,card2,card3,card4,card5,action," ",cb,p);
 	std::string dest;
 	//include/card_deck/2C.jpg
@@ -227,7 +240,73 @@ void setup(std::string s)
 	strcpy(temp,pot.c_str());
 	gtk_label_set_text(GTK_LABEL(g_cpot), temp);  
 	
-	}else if((s.find("\"action\":\"U\"")!=-1))
+	}else if(s.find("\"action\":\"E\"")!=-1)
+	{
+	pos=s.find(",\"card1\"");
+	pos=pos+10;
+	card1=s.substr(pos,2);
+	pos=s.find(",\"card2\"");
+	pos=pos+10;
+	card2=s.substr(pos,2);
+	pos=s.find(",\"card3\"");
+	pos=pos+10;
+	card3=s.substr(pos,2);
+	pos=s.find(",\"card4\"");
+	pos=pos+10;
+	card4=s.substr(pos,2);
+	pos=s.find(",\"card5\"");
+	pos=pos+10;
+	card5=s.substr(pos,2);	
+	action=s.substr(12,1);	
+	//pos=s.find(",\"pot\"");
+	pos=s.find(",\"currentbet\"") +14;
+	int len=0;
+	len=s.find(",\"pot\"")-pos;
+	cbet=s.substr(pos,len);
+
+	pos=s.find(",\"pot\"")+7;
+	len= s.find(",\"toexchange\"")-pos;
+	pot=s.substr(pos,len);	
+	char temp[300];	
+	
+
+	int cb;//=stoi(cbet);
+	int p;//=stoi(pot);
+	
+	std::istringstream(cbet)>>cb;
+	std::istringstream(pot)>>p;
+	
+	
+	
+	j=j.create(ip,card1,card2,card3,card4,card5,action," ",cb,p);
+	std::string dest;
+	//include/card_deck/2C.jpg
+	dest="include/card_deck/"+card1+".jpg";
+	strcpy(temp,dest.c_str());
+	gtk_image_set_from_file (GTK_IMAGE (g_img1), temp);
+	
+	dest="include/card_deck/"+card2+".jpg";
+	strcpy(temp,dest.c_str());
+	gtk_image_set_from_file (GTK_IMAGE (g_img2), temp);
+	
+	dest="include/card_deck/"+card3+".jpg";
+	strcpy(temp,dest.c_str());
+	gtk_image_set_from_file (GTK_IMAGE (g_img3), temp);
+	
+	dest="include/card_deck/"+card4+".jpg";
+	strcpy(temp,dest.c_str());
+	gtk_image_set_from_file (GTK_IMAGE (g_img4), temp);
+	
+	dest="include/card_deck/"+card5+".jpg";
+	strcpy(temp,dest.c_str());
+	gtk_image_set_from_file (GTK_IMAGE (g_img5), temp);
+	strcpy(temp,cbet.c_str());
+	gtk_label_set_text(GTK_LABEL(g_cbet), temp);
+	strcpy(temp,pot.c_str());
+	gtk_label_set_text(GTK_LABEL(g_cpot), temp);  
+	
+	}
+	else if((s.find("\"action\":\"U\"")!=-1))
 	{
 		char temp[300];	
 		pos=s.find(",\"currentbet\"") +14;
