@@ -288,12 +288,11 @@ private:
 		    {
 		    	std::cerr<<"exchange round\n";
 		    	exchange(str);
-		    }
-		    
+		    }    
 		  	else if( inplay==1 && cur_state_r2==1)
 		    {
 				std::cerr<<"round2\n";
-		    	round2(str);
+		    	round(str);
 		    }
             else if(tplayer>=1 && inplay==0 && tplayer==inplayer)
            	{
@@ -523,10 +522,16 @@ private:
 			}
 			if(c==0)
 			{
-				cur_state_r1=0;
-				cur_state_e=1;
-				turn=0;
-				
+				if(cur_state_r1==1)
+				{
+					cur_state_r1=0;
+					cur_state_e=1;
+					turn=0;
+				}
+				else if(cur_state_r2=1)
+				{
+					end();
+				}	
 			}	
 		}	
 	}
@@ -546,10 +551,10 @@ private:
 		{
 			turn++;
 		}	
-		else if(pl[turn].get_active()==0 && pl[turn].get_id()==tid)// && pl[turn].get_id()==tid)
-		{
-			turn++;
-		}
+//		else if(pl[turn].get_active()==0 && pl[turn].get_id()==tid)// && pl[turn].get_id()==tid)
+//		{
+//			turn++;
+//		}
 		else if(pl[turn].get_active()==1 && pl[turn].get_id()==tid)
 		{	    
 				pos=s.find("\"toexchange\"");
@@ -558,7 +563,6 @@ private:
 				std::string te= s.substr(pos,len);
 				nlohmann::json j;
 				std::string cards[5];
-				
 				
 				if(te.find("1")!=-1)
 				{
@@ -637,98 +641,6 @@ private:
 		}
 	}
 	
-	
-	
-
-	void round2(std::string s)
-	{		
-		int pos;
-		int len;
-		std::string tid;            
-		pos=s.find(",\"0\"");
-		pos= pos+9;
-		len=s.find("\",\"action")-pos;
-		tid=s.substr(pos,len);	
-		
-		
-		if(turn>inplayer)
-		{
-			turn=0;
-		}
-		if(pl[turn].get_active()==0 && pl[turn].get_id()==tid)
-		{
-			turn++;
-		}	
-		else if(pl[turn].get_active()==1 && pl[turn].get_id()==tid)
-			{	
-				pos=s.find(",\"action\"");
-				pos=pos+11;
-				std::string action;
-				action=s.substr(pos,1);
-				if(action=="B")
-				{
-					bet(s);
-					turn++;
-					count++;
-				}
-				if(action=="F")
-				{
-					fold();
-					turn++;
-					count++;
-				}
-				check_round2();		
-			}
-					
-	}
-	
-
-	void check_round2()
-	{
-		
-		bool c=0;
-		if(active_players==0)
-		{
-			end();
-		}
-		else if(count>inplayer)
-		{
-			
-			for(int i=0;i<=inplayer;i++)
-			{
-			
-				if(pl[i].get_active()==1)
-				{
-				
-					for(int k=i;k<=inplayer;k++)
-					{
-					
-						if(pl[k].get_active()==1)
-						{
-						
-							if(pl[k].get_bet()!= pl[i].get_bet())
-								{
-									
-									c=1;
-									i=8;
-									k=8;
-								}		
-						}
-					}
-				}
-			}
-			if(c==0)
-			{
-				end();
-			}
-		}
-
-		
-	}
-
-	
-	
-	
 	void end()
 	{
 		unsigned long int score=0;
@@ -782,183 +694,172 @@ private:
 	}
   
  	unsigned long int get_value(int i)
-	{
-		
-		std::string tphand[5];
-		tphand[0]=pl[i].get_phand(0);
-		tphand[1]=pl[i].get_phand(1);
-		tphand[2]=pl[i].get_phand(2);
-		tphand[3]=pl[i].get_phand(3);
-		tphand[4]=pl[i].get_phand(4);
-		int val[13];
-		int suite[4];
-		std::string key;
-		int  j;
-		
-		for (int k = 1; k < 5; k++) 
-		{  
-			key = tphand[k];  
-		    j = k - 1;  
-		    while (j >= 0 && tphand[j]>key) 
-		    {  
-		        tphand[j + 1] = tphand[j];  
-		        j = j - 1;  
-		    }  
-		    tphand[j + 1] = key;  
-		}  
-		
-		pl[i].set_phand(tphand[0],tphand[1],tphand[2],tphand[3],tphand[4]);
-		for(int a=0;a<5;a++)
-		{
-			std::cerr<<pl[i].get_phand(a);
-		}
-		std::cerr<<std::endl;
-	
-	
-		std::string temp;
-		for(int a=0;a<13;a++)
-		{
-			val[a]=0;
+	{	
+			std::string tphand[5];
+			tphand[0]=pl[i].get_phand(0);
+			tphand[1]=pl[i].get_phand(1);
+			tphand[2]=pl[i].get_phand(2);
+			tphand[3]=pl[i].get_phand(3);
+			tphand[4]=pl[i].get_phand(4);
+			int val[13];
+			int suite[4];
+			std::string key;
+			int  j;	
+			for (int k = 1; k < 5; k++) 
+			{  
+				key = tphand[k];  
+				j = k - 1;  
+				while (j >= 0 && tphand[j]>key) 
+				{  
+				    tphand[j + 1] = tphand[j];  
+				    j = j - 1;  
+				}  
+				tphand[j + 1] = key;  
+			}  	
+			pl[i].set_phand(tphand[0],tphand[1],tphand[2],tphand[3],tphand[4]);
+			for(int a=0;a<5;a++)
+			{
+				std::cerr<<pl[i].get_phand(a);
+			}
+			std::cerr<<std::endl;
+			std::string temp;
+			for(int a=0;a<13;a++)
+			{
+				val[a]=0;
+					
+			}
+			for(int k=0;k<5;k++)
+			{
+				temp=pl[i].get_phand(k);
+				temp=temp.substr(0,1);
 				
+				if(temp=="2")
+					val[0]= val[0]+1;
+				if(temp=="3")
+					val[1]= val[1]+1;
+				if(temp=="4")
+					val[2]= val[2]+1;
+				if(temp=="5")
+					val[3]= val[3]+1;
+				if(temp=="6")
+					val[4]= val[4]+1;
+				if(temp=="7")
+					val[5]= val[5]+1;
+				if(temp=="8")
+					val[6]= val[6]+1;
+				if(temp=="9")
+					val[7]= val[7]+1;
+				if(temp=="T")
+					val[8]= val[8]+1;
+				if(temp=="J")
+					val[9]= val[9]+1;
+				if(temp=="Q")
+					val[10]= val[10]+1;
+				if(temp=="K")
+					val[11]= val[11]+1;
+				if(temp=="A")
+					val[12]= val[12]+1;
+			}
+			for(int k=0;k<5;k++)
+			{
+				temp=pl[i].get_phand(k);
+				temp=temp.substr(1,1);
+				if(temp=="C")
+					suite[0]= suite[0]+1;
+				if(temp=="D")
+					suite[1]= suite[1]+1;
+				if(temp=="H")
+					suite[2]= suite[2]+1;
+				if(temp=="S")
+					suite[3]= suite[3]+1;
+			}	
+			int rank[5];
+			for(int k=0;k<5;k++)
+			{
+				temp=pl[i].get_phand(k);
+				temp=temp.substr(0,1);
+				if(temp=="2")
+					rank[k]= 2;
+				if(temp=="3")
+					rank[k]= 3;
+				if(temp=="4")
+					rank[k]= 4;
+				if(temp=="5")
+					rank[k]= 5;
+				if(temp=="6")
+					rank[k]= 6;
+				if(temp=="7")
+					rank[k]= 7;
+				if(temp=="8")
+					rank[k]= 8;
+				if(temp=="9")
+					rank[k]= 9;
+				if(temp=="T")
+					rank[k]= 10;
+				if(temp=="J")
+					rank[k]= 11;
+				if(temp=="Q")
+					rank[k]= 12;
+				if(temp=="K")
+					rank[k]= 13;
+				if(temp=="A")
+					rank[k]= 14;
 		}
-		
-		
-	
-		for(int k=0;k<5;k++)
-		{
-			temp=pl[i].get_phand(k);
-			temp=temp.substr(0,1);
-			
-			if(temp=="2")
-				val[0]= val[0]+1;
-			if(temp=="3")
-				val[1]= val[1]+1;
-			if(temp=="4")
-				val[2]= val[2]+1;
-			if(temp=="5")
-				val[3]= val[3]+1;
-			if(temp=="6")
-				val[4]= val[4]+1;
-			if(temp=="7")
-				val[5]= val[5]+1;
-			if(temp=="8")
-				val[6]= val[6]+1;
-			if(temp=="9")
-				val[7]= val[7]+1;
-			if(temp=="T")
-				val[8]= val[8]+1;
-			if(temp=="J")
-				val[9]= val[9]+1;
-			if(temp=="Q")
-				val[10]= val[10]+1;
-			if(temp=="K")
-				val[11]= val[11]+1;
-			if(temp=="A")
-				val[12]= val[12]+1;
-		}
-		for(int k=0;k<5;k++)
-		{
-			temp=pl[i].get_phand(k);
-			temp=temp.substr(1,1);
-			if(temp=="C")
-				suite[0]= suite[0]+1;
-			if(temp=="D")
-				suite[1]= suite[1]+1;
-			if(temp=="H")
-				suite[2]= suite[2]+1;
-			if(temp=="S")
-				suite[3]= suite[3]+1;
-		}
-		
-		int rank[5];
-		
-		for(int k=0;k<5;k++)
-		{
-			temp=pl[i].get_phand(k);
-			temp=temp.substr(0,1);
-			if(temp=="2")
-				rank[k]= 2;
-			if(temp=="3")
-				rank[k]= 3;
-			if(temp=="4")
-				rank[k]= 4;
-			if(temp=="5")
-				rank[k]= 5;
-			if(temp=="6")
-				rank[k]= 6;
-			if(temp=="7")
-				rank[k]= 7;
-			if(temp=="8")
-				rank[k]= 8;
-			if(temp=="9")
-				rank[k]= 9;
-			if(temp=="T")
-				rank[k]= 10;
-			if(temp=="J")
-				rank[k]= 11;
-			if(temp=="Q")
-				rank[k]= 12;
-			if(temp=="K")
-				rank[k]= 13;
-			if(temp=="A")
-				rank[k]= 14;
-	}
-	int key1;
-	for (int k = 1; k < 5; k++) 
-		{  
-			key1 = rank[k];  
-		    j = k - 1;  
-		    while (j >= 0 && rank[j]>key1) 
-		    {  
-		        rank[j + 1] = rank[j];  
-		        j = j - 1;  
-		    }  
-		    rank[j + 1] = key1;  
-		}  
+		int key1;
+		for (int k = 1; k < 5; k++) 
+			{  
+				key1 = rank[k];  
+				j = k - 1;  
+				while (j >= 0 && rank[j]>key1) 
+				{  
+				    rank[j + 1] = rank[j];  
+				    j = j - 1;  
+				}  
+				rank[j + 1] = key1;  
+			}  
 
-	if(stright(val) && flush(suite))
-	{
-		std::cerr<<"sf";
-		return 8000000+ value_high(val);
-	}
-	else if(four_of_a_kind(val))
-	{
-		std::cerr<<"fok";
-		return 7000000+ four_of_a_kind(val);
-	}
-	else if(full_house(val))
-	{
-		std::cerr<<"f-ho";
-		return	 6000000 + full_house(val);
-	}
-	else if(flush(suite))
-	{
-		std::cerr<<"f";
-		return	 5000000 + value_high(val);
-	}
-	else if(stright(val))
-	{
-		std::cerr<<"s";
-		return  4000000 + value_high(val);
-	}
-	else if(three_of_a_kind(val))
-	{
-		std::cerr<<"tok";
-		return	 3000000 + three_of_a_kind(val);
-	}	
-	else if(two_pair(rank))
-	{
-		std::cerr<<"tp";
-		return	 2000000 + two_pair(rank);
-	}
-	else if(pair(rank))
-	{
-		std::cerr<<"p";
-		return	 1000000 + pair(rank);
-	}
-	else
-		return value_high(rank);
-
+		if(stright(val) && flush(suite))
+		{
+			std::cerr<<"sf";
+			return 8000000+ value_high(val);
+		}
+		else if(four_of_a_kind(val))
+		{
+			std::cerr<<"fok";
+			return 7000000+ four_of_a_kind(val);
+		}
+		else if(full_house(val))
+		{
+			std::cerr<<"f-ho";
+			return	 6000000 + full_house(val);
+		}
+		else if(flush(suite))
+		{
+			std::cerr<<"f";
+			return	 5000000 + value_high(val);
+		}
+		else if(stright(val))
+		{
+			std::cerr<<"s";
+			return  4000000 + value_high(val);
+		}
+		else if(three_of_a_kind(val))
+		{
+			std::cerr<<"tok";
+			return	 3000000 + three_of_a_kind(val);
+		}	
+		else if(two_pair(rank))
+		{
+			std::cerr<<"tp";
+			return	 2000000 + two_pair(rank);
+		}
+		else if(pair(rank))
+		{
+			std::cerr<<"p";
+			return	 1000000 + pair(rank);
+		}
+		else
+			return value_high(rank);
 	}
 
 	int value_high(int val[])
@@ -971,8 +872,7 @@ private:
 		}
 		return temp;
 	}
-	
-	
+
 	int pair(int val[])
 	{
 		if(val[0]==val[1])
@@ -1077,10 +977,7 @@ private:
 		}
 		return 0;
 	}
-	
-	
-		
-	
+
 	void reset()
 	{
 		for(int zz=0;zz<52;zz++)
